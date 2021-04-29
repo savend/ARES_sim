@@ -29,6 +29,7 @@
   <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
     <param name="publish_frequency" type="double" value="30.0" />
   </node>
+ <!--  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher"></node> -->
 
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" />
@@ -36,16 +37,16 @@
   <rosparam command="load"
             file="$(find ares_sim)/config/joints.yaml"
             ns="joint_state_controller" />
-  <rosparam command="load"
+<!--   <rosparam command="load"
             file="$(find ares_sim)/config/diffdrive.yaml"
-            ns="diff_drive_controller" />
+            ns="diff_drive_controller" /> -->
 
-  <node name="controller_spawner" pkg="controller_manager" type="spawner"
+<!--   <node name="controller_spawner" pkg="controller_manager" type="spawner"
     args="joint_state_controller
-          diff_drive_controller" />
+          diff_drive_controller" /> -->
 
   <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
-    <param name="default_topic" value="/diff_drive_controller/cmd_vel"/>
+    <param name="default_topic" value="/cmd_vel"/>
   </node>
 
 
@@ -55,4 +56,18 @@
     <param name="map_frame"  value="map"/>
     <rosparam command="load" file="$(find ares_bringup)/config/gmapping_params.yaml" />
   </node> 
+
+
+  <!--*****NAVIGATION******-->
+
+  <arg name="move_forward_only" default="false"/>
+
+  <include file="$(find ares_sim)/launch/amcl.launch"/>
+
+  <include file="$(find ares_sim)/launch/move_base.launch">
+    <arg name="move_forward_only" value="$(arg move_forward_only)"/>
+  </include>
+
+
+
 </launch>
